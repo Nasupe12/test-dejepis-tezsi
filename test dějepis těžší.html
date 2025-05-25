@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <title>Doplňovací test: Jan Hus a husitství</title>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+    .question { margin-bottom: 20px; }
+    input[type="text"] {
+      padding: 8px;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 8px;
+    }
+    .correct { background-color: #c8f7c5; }
+    .wrong { background-color: #f7c5c5; }
+    .hidden { display: none; }
+    #result { font-weight: bold; font-size: 18px; margin-top: 20px; }
+    button { margin-top: 10px; padding: 8px 16px; font-size: 16px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<h1>Doplňovací test: Jan Hus a husitství</h1>
+<div id="quiz"></div>
+<div id="result" class="hidden"></div>
+<button id="restartBtn" class="hidden">Opakovat test</button>
+
+<script>
+const questions = [
+  {question: "Kým byl Jan Hus?", answer: "univerzitním mistrem a rektorem Karlovy univerzity"},
+  {question: "Kde Jan Hus kázal?", answer: "v Betlémské kapli"},
+  {question: "Co Jan Hus kritizoval?", answer: "papežské schizma a nešvary v církvi"},
+  {question: "Kdo ho zpočátku chránil?", answer: "Václav IV."},
+  {question: "Proč odešel Jan Hus z Prahy?", answer: "kvůli papežské klatbě a zákazu bohoslužeb"},
+  {question: "Kam odešel Jan Hus kázat?", answer: "na venkov"},
+  {question: "Kdy byl pozván na koncil?", answer: "1414"},
+  {question: "Kdo svolal koncil do Kostnice?", answer: "Zikmund Lucemburský"},
+  {question: "Jak Jan Hus zemřel?", answer: "byl upálen 6. července 1415"},
+  {question: "Jak se nazývali Husovi stoupenci?", answer: "husité nebo kališníci"},
+  {question: "Co symbolizoval kalich?", answer: "přijímání pod obojí"},
+  {question: "Jak se jmenoval radikální směr husitů?", answer: "táborité"},
+  {question: "Kdo byl slavný husitský vojevůdce?", answer: "Jan Žižka z Trocnova"},
+  {question: "Co udělali husité při první pražské defenestraci?", answer: "vyházeli konšely z okna"},
+  {question: "Jak zemřel král Václav IV.?", answer: "dostal srdeční záchvat"},
+  {question: "V jaké bitvě husité porazili křižáky?", answer: "na hoře Vítkov"},
+  {question: "Jak se jmenovala slavná výprava husitů za hranice?", answer: "spanilé jízdy"},
+  {question: "Kdy se odehrála bitva u Lipan?", answer: "1434"}
+];
+
+let current = 0;
+let score = 0;
+let shuffled = [];
+
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function normalize(text) {
+  return text.toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+function showQuestion() {
+  const quiz = document.getElementById('quiz');
+  quiz.innerHTML = '';
+
+  if (current >= shuffled.length) {
+    document.getElementById('result').textContent = `Měl jsi správně ${score} z ${shuffled.length} otázek.`;
+    document.getElementById('result').classList.remove('hidden');
+    document.getElementById('restartBtn').classList.remove('hidden');
+    return;
+  }
+
+  const q = shuffled[current];
+  const qDiv = document.createElement('div');
+  qDiv.className = 'question';
+  qDiv.innerHTML = `<strong>${q.question}</strong><br>`;
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = 'Napiš odpověď sem...';
+
+  const button = document.createElement('button');
+  button.textContent = 'Odeslat';
+
+  const feedback = document.createElement('div');
+
+  button.onclick = () => {
+    const userAnswer = normalize(input.value);
+    const correctAnswer = normalize(q.answer);
+    if (userAnswer === correctAnswer) {
+      input.classList.add('correct');
+      feedback.textContent = "✅ Správně!";
+      score++;
+    } else {
+      input.classList.add('wrong');
+      feedback.textContent = `❌ Špatně. Správná odpověď: ${q.answer}`;
+    }
+
+    input.disabled = true;
+    button.disabled = true;
+    setTimeout(() => {
+      current++;
+      showQuestion();
+    }, 1500);
+  };
+
+  qDiv.appendChild(input);
+  qDiv.appendChild(button);
+  qDiv.appendChild(feedback);
+  quiz.appendChild(qDiv);
+}
+
+function startQuiz() {
+  current = 0;
+  score = 0;
+  shuffled = shuffle([...questions]);
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('restartBtn').classList.add('hidden');
+  showQuestion();
+}
+
+document.getElementById('restartBtn').onclick = startQuiz;
+window.onload = startQuiz;
+</script>
+
+</body>
+</html>
